@@ -1,5 +1,6 @@
 <script lang="ts" module>
   export interface Bar {
+    day: string;
     label: string;
     total: number;
     goal: number;
@@ -8,14 +9,14 @@
 </script>
 
 <script lang="ts">
-  let { bars }: { bars: Bar[] } = $props();
+  let { bars, onselect }: { bars: Bar[]; onselect?: (day: string) => void } = $props();
 
   const max = $derived(Math.max(1, ...bars.map((b) => Math.max(b.total, b.goal))));
 </script>
 
-<div class="bars" role="img" aria-label="Push-ups over the last 7 days">
+<div class="bars">
   {#each bars as b, i (i)}
-    <div class="col">
+    <button class="col" onclick={() => onselect?.(b.day)} aria-label="{b.label}: {b.total} push-ups. Edit this day">
       <span class="value">{b.total || ''}</span>
       <div
         class="bar"
@@ -24,7 +25,7 @@
         style="height:{Math.max(6, Math.round((b.total / max) * 70))}px"
       ></div>
       <span class="day">{b.label}</span>
-    </div>
+    </button>
   {/each}
 </div>
 
@@ -37,6 +38,9 @@
     height: 112px;
   }
   .col {
+    padding: 0;
+    border: none;
+    background: transparent;
     display: flex;
     flex-direction: column;
     align-items: center;

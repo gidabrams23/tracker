@@ -5,17 +5,23 @@ interface BackupFile {
   app: 'tracker';
   schemaVersion: number;
   exportedAt: string;
-  pushupSets: PushupSet[];
-  meta: MetaRow[];
+  /** Every table, keyed by name (schema 2+). */
+  tables?: Record<string, unknown[]>;
+  /** Schema 1 backups stored these at the top level. */
+  pushupSets?: PushupSet[];
+  meta?: MetaRow[];
 }
 
 export async function exportBackup(): Promise<'shared' | 'downloaded' | 'cancelled'> {
+  const tables: Record<string, unknown[]> = {};
+  for (const t of db.tables) tables[t.name] = await t.toArray();
+  tables.meta = (tables.meta as MetaRow[]).filter((m) => m.key !== 'lastBackupAt');
+
   const data: BackupFile = {
     app: 'tracker',
     schemaVersion: SCHEMA_VERSION,
     exportedAt: new Date().toISOString(),
-    pushupSets: await db.pushupSets.toArray(),
-    meta: (await db.meta.toArray()).filter((m) => m.key !== 'lastBackupAt'),
+    tables,
   };
   const name = `tracker-backup-${dayKey()}.json`;
   const file = new File([JSON.stringify(data, null, 2)], name, { type: 'application/json' });
@@ -42,20 +48,24 @@ export async function exportBackup(): Promise<'shared' | 'downloaded' | 'cancell
   return result;
 }
 
-/** Merges a backup into the current data. Records with the same id are overwritten. */
+/** Merges a backup into the current data. Records with the same id are overwritten. Returns records restored. */
 export async function importBackup(file: File): Promise<number> {
   const data = JSON.parse(await file.text()) as Partial<BackupFile>;
-  if (data.app !== 'tracker' || !Array.isArray(data.pushupSets)) {
-    throw new Error('This file is not a Tracker backup.');
-  }
+  if (data.app !== 'tracker') throw new Error('This file is not a Tracker backup.');
   if ((data.schemaVersion ?? 0) > SCHEMA_VERSION) {
     throw new Error('This backup is from a newer version of the app. Update the app first.');
   }
-  await db.transaction('rw', db.pushupSets, db.meta, async () => {
-    await db.pushupSets.bulkPut(data.pushupSets!);
-    if (Array.isArray(data.meta)) await db.meta.bulkPut(data.meta);
+  const tables = data.tables ?? { pushupSets: data.pushupSets ?? [], meta: data.meta ?? [] };
+  const known = new Set(db.tables.map((t) => t.name));
+  let count = 0;
+  await db.transaction('rw', db.tables, async () => {
+    for (const [name, rows] of Object.entries(tables)) {
+      if (!known.has(name) || !Array.isArray(rows)) continue;
+      await db.table(name).bulkPut(rows);
+      count += rows.length;
+    }
   });
-  return data.pushupSets.length;
+  return count;
 }
 
 export async function lastBackupAt(): Promise<number | null> {

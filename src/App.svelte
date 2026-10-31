@@ -4,11 +4,14 @@
   import Pushups from './screens/Pushups.svelte';
   import FloorMode from './screens/FloorMode.svelte';
   import Settings from './screens/Settings.svelte';
+  import Home from './screens/Home.svelte';
+  import Workouts from './screens/workouts/Workouts.svelte';
   import { loadSettings } from './lib/settings.svelte';
+  import { ensureTemplates } from './lib/workouts/store';
   import { dayKey } from './lib/day';
   import type { Screen } from './lib/nav';
 
-  let screen: Screen = $state('pushups');
+  let screen: Screen = $state('home');
   let today = $state(dayKey());
   let ready = $state(false);
   let needRefresh = $state(false);
@@ -24,7 +27,7 @@
   }
 
   onMount(() => {
-    loadSettings().finally(() => (ready = true));
+    Promise.all([loadSettings(), ensureTemplates()]).finally(() => (ready = true));
     void navigator.storage?.persist?.();
     updateSW = registerSW({ onNeedRefresh: () => (needRefresh = true) });
 
@@ -40,10 +43,14 @@
 </script>
 
 {#if ready}
-  {#if screen === 'pushups'}
+  {#if screen === 'home'}
+    <Home {today} {go} />
+  {:else if screen === 'pushups'}
     <Pushups {today} {go} />
   {:else if screen === 'floor'}
     <FloorMode {today} {go} />
+  {:else if screen === 'workouts'}
+    <Workouts {today} {go} />
   {:else}
     <Settings {go} />
   {/if}

@@ -4,6 +4,7 @@
   import Ring from '../components/Ring.svelte';
   import WeekBars from '../components/WeekBars.svelte';
   import Heatmap from '../components/Heatmap.svelte';
+  import DaySheet from '../components/DaySheet.svelte';
   import { allSets, logSet, deleteSet, undoLastToday, totalsByDay } from '../lib/pushups';
   import { computeStreak } from '../lib/streak';
   import { settings, goalFor } from '../lib/settings.svelte';
@@ -17,6 +18,7 @@
   // Reps tapped but not yet saved as a set. Kept in localStorage so a closed app doesn't lose them.
   const PENDING_KEY = 'tracker.pendingSet';
   let pending = $state(0);
+  let editDay: string | null = $state(null);
 
   function persistPending() {
     try {
@@ -52,6 +54,7 @@
   const streak = $derived(computeStreak(totals, dayGoal, today));
   const bars = $derived(
     lastNDays(7, today).map((d) => ({
+      day: d,
       label: WEEKDAY_SHORT[weekday(d)],
       total: d === today ? count : (totals.get(d) ?? 0),
       goal: dayGoal(d),
@@ -108,7 +111,12 @@
 
 <main class="screen">
   <header class="top">
-    <span class="label">{WEEKDAY_NAMES[weekday(today)]}</span>
+    <div class="back">
+      <button class="icon-btn" onclick={() => go('home')} aria-label="Home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
+      </button>
+      <span class="label">{WEEKDAY_NAMES[weekday(today)]}</span>
+    </div>
     <div class="actions">
       <button class="icon-btn" onclick={() => go('floor')} aria-label="Floor mode">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="3" /><path d="M9 18h6" /></svg>
@@ -167,9 +175,9 @@
   <section class="card">
     <div class="card-head">
       <h2>This week</h2>
-      <span class="muted small">{weekTotal} total</span>
+      <span class="muted small">{weekTotal} total · tap a day to edit</span>
     </div>
-    <WeekBars {bars} />
+    <WeekBars {bars} onselect={(d) => (editDay = d)} />
   </section>
 
   <section class="card list">
@@ -199,6 +207,10 @@
   </section>
 </main>
 
+{#if editDay}
+  <DaySheet day={editDay} {today} sets={sets.filter((s) => s.day === editDay)} onclose={() => (editDay = null)} />
+{/if}
+
 <style>
   .top,
   .title-row,
@@ -208,8 +220,10 @@
     align-items: center;
     gap: 12px;
   }
-  .actions {
+  .actions,
+  .back {
     display: flex;
+    align-items: center;
     gap: 8px;
   }
   .streak {
