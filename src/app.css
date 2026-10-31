@@ -1,0 +1,134 @@
+:root {
+  --bg: #17130f;
+  --card: #1f1914;
+  --raised: #241d17;
+  --line: #3a2e24;
+  --line-soft: #2e241c;
+  --text: #f6efe8;
+  --muted: #c9b8a8;
+  --accent: #ff6a13;
+  --accent-deep: #9a3a08;
+  --accent-past: #8a4a1f;
+  --accent-soft: #ffd3b0;
+  --on-accent: #1a0e05;
+  --ring-track: #3a2414;
+  --display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --body: 'Inter', system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior-y: none;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 16px minimum stops iOS zooming into focused inputs */
+input {
+  font: inherit;
+  font-size: 16px;
+}
+
+.screen {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top) + 16px) 18px calc(env(safe-area-inset-bottom) + 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 16px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.title {
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chip {
+  height: 46px;
+  border-radius: 12px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  color: var(--accent-soft);
+  font-size: 16px;
+  font-weight: 600;
+  transition: transform 0.08s ease;
+}
+
+.chip:active {
+  transform: translateY(2px);
+}
+
+.primary {
+  height: 52px;
+  border-radius: 14px;
+  border: none;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.primary:disabled {
+  background: var(--line);
+  color: var(--muted);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
