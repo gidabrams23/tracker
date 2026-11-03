@@ -50,12 +50,45 @@ export interface WorkoutSet {
   loggedAt: number;
 }
 
+export interface AlbumEntry {
+  id: string;
+  /** Day it was listened to. */
+  day: string;
+  title: string;
+  artist: string;
+  year?: number;
+  genre?: string;
+  artworkUrl?: string;
+  itunesId?: number;
+  /** 0–100 */
+  score: number;
+  notes: string;
+  createdAt: number;
+}
+
+export type RunType = 'outdoor' | 'treadmill';
+export type Effort = 'easy' | 'steady' | 'hard';
+
+export interface Run {
+  id: string;
+  day: string;
+  miles: number;
+  /** Optional, so old runs can be backfilled with just distance and date. */
+  seconds?: number;
+  type: RunType;
+  effort?: Effort;
+  notes: string;
+  createdAt: number;
+}
+
 export const db = new Dexie('tracker') as Dexie & {
   pushupSets: EntityTable<PushupSet, 'id'>;
   meta: EntityTable<MetaRow, 'key'>;
   workoutTemplates: EntityTable<WorkoutTemplate, 'id'>;
   workoutSessions: EntityTable<WorkoutSession, 'id'>;
   workoutSets: EntityTable<WorkoutSet, 'id'>;
+  albums: EntityTable<AlbumEntry, 'id'>;
+  runs: EntityTable<Run, 'id'>;
 };
 
 // Bump the version for every schema change. Never change a primary key.
@@ -68,5 +101,9 @@ db.version(2).stores({
   workoutSessions: 'id, day, startedAt, endedAt',
   workoutSets: 'id, sessionId, exerciseId, loggedAt',
 });
+db.version(3).stores({
+  albums: 'id, day, score, createdAt',
+  runs: 'id, day',
+});
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;

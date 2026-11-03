@@ -93,9 +93,9 @@
 
       {#each b.exerciseIds as id, slot (slot)}
         {#if slot > 0}<span class="swap-sign" aria-hidden="true">⇄ alternate with</span>{/if}
-        <button class="exercise" disabled={isLocked} onclick={() => (picking = { block: i, slot })}>
+        <button class="exercise" onclick={() => (picking = { block: i, slot })}>
           <span>{exercise(id).name}</span>
-          <span class="change">{isLocked ? '' : 'Swap'}</span>
+          <span class="change">Swap</span>
         </button>
       {/each}
 

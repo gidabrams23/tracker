@@ -85,10 +85,25 @@
   </section>
 
   <section class="card">
-    <h2>Quick-set buttons</h2>
+    <h2>Set buttons</h2>
+    {#each settings.heroSets as n, i (i)}
+      <label class="field">
+        <span>Big button {i + 1}</span>
+        <input
+          type="number"
+          inputmode="numeric"
+          min="1"
+          value={n}
+          onchange={(e) => {
+            settings.heroSets[i] = clampInt(e.currentTarget.value, 1, 500);
+            void saveSettings();
+          }}
+        />
+      </label>
+    {/each}
     {#each settings.quickSets as n, i (i)}
       <label class="field">
-        <span>Button {i + 1}</span>
+        <span>Small button {i + 1}</span>
         <input type="number" inputmode="numeric" min="1" value={n} onchange={(e) => setQuick(i, e.currentTarget.value)} />
       </label>
     {/each}
@@ -101,6 +116,23 @@
         value={settings.floorTarget}
         onchange={(e) => {
           settings.floorTarget = clampInt(e.currentTarget.value, 1, 500);
+          void saveSettings();
+        }}
+      />
+    </label>
+  </section>
+
+  <section class="card">
+    <h2>Albums</h2>
+    <label class="field">
+      <span>Albums per week</span>
+      <input
+        type="number"
+        inputmode="numeric"
+        min="1"
+        value={settings.albumsPerWeek}
+        onchange={(e) => {
+          settings.albumsPerWeek = clampInt(e.currentTarget.value, 1, 14);
           void saveSettings();
         }}
       />

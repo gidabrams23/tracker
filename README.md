@@ -1,6 +1,6 @@
 # Tracker
 
-A personal tracker that installs on an iPhone home screen as a web app. Phase 1 is the push-up tracker. Workouts and album-a-day come next. The full spec is in [docs/PRD.md](docs/PRD.md).
+A personal tracker that installs on an iPhone home screen as a web app. Modules: push-ups, workouts, album a day, and running. The original spec is in [docs/PRD.md](docs/PRD.md).
 
 All data stays on the phone (IndexedDB). Back it up from Settings → Export backup.
 
@@ -42,14 +42,21 @@ Every push to `main` redeploys. The app shows a "New version ready" bar when an 
 ```
 src/
   App.svelte            screen switching, day rollover, update prompt
-  screens/              Pushups, FloorMode, Settings
-  components/           FlipDigits, Ring, WeekBars, Heatmap
+  screens/
+    Home.svelte         module tiles + weekly habit chain
+    Pushups, FloorMode, Settings
+    workouts/           overview, flexible session logger, plan editor, exercise picker
+    albums/             weekly goal, iTunes search, 0–100 scoring, wall + ranked
+    running/            log runs, weekly/monthly/yearly totals, bests, milestones
+  components/           Stepper, Sheet, SetJar, Ring, Bars, WeekBars, Heatmap, FlipDigits
   lib/
-    db.ts               Dexie schema (bump version() for every change)
-    pushups.ts          logging + live query
-    streak.ts           streak / freeze / grace rules (tested)
-    settings.svelte.ts  goals, quick sets, feedback toggles
-    backup.ts           JSON export/import
+    db.ts               Dexie schema (bump version() for every change; upgrade is tested)
+    pushups.ts, streak.ts
+    workouts/           exercise library, plan logic (tested), store
+    albums/             score tiers + weekly streak (tested), iTunes search, store
+    running/            stats (tested), store
+    settings.svelte.ts  goals, set buttons, albums per week, feedback toggles
+    backup.ts           JSON export/import of every table
     feedback.ts         haptics, sounds, confetti
-    wakelock.ts         keep screen on in Floor mode
+    wakelock.ts         keep screen on in Floor mode and workouts
 ```

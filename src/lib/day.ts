@@ -28,6 +28,20 @@ export function lastNDays(n: number, end: string): string[] {
   return Array.from({ length: n }, (_, i) => addDays(end, i - (n - 1)));
 }
 
+/** Monday of the week containing `key`. Weekly goals (albums, miles) run Monday–Sunday. */
+export function weekStart(key: string): string {
+  return addDays(key, -((weekday(key) + 6) % 7));
+}
+
+/** "2026-11" */
+export function monthKey(key: string): string {
+  return key.slice(0, 7);
+}
+
+export function shortDate(key: string): string {
+  return parseDay(key).toLocaleDateString([], { month: 'short', day: 'numeric' });
+}
+
 export const WEEKDAY_SHORT = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 export const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 

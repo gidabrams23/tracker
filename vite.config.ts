@@ -44,6 +44,16 @@ export default defineConfig({
               cacheableResponse: { statuses: [0, 200] },
             },
           },
+          {
+            // Album covers from Apple, so the record wall works offline.
+            urlPattern: /^https:\/\/is\d+-ssl\.mzstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'album-art',
+              expiration: { maxEntries: 600, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
         ],
       },
     }),

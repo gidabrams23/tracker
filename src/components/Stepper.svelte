@@ -7,14 +7,18 @@
     min = 0,
     max = 9999,
     label,
-    format,
+    unit = '',
+    hint,
   }: {
     value: number;
     step?: number;
     min?: number;
     max?: number;
     label: string;
-    format?: (v: number) => string;
+    /** Shown after the number, e.g. "lb". */
+    unit?: string;
+    /** Small text under the number, e.g. "BW+25". */
+    hint?: string;
   } = $props();
 
   function nudge(dir: 1 | -1) {
@@ -26,7 +30,14 @@
 
   function typed(e: Event & { currentTarget: HTMLInputElement }) {
     const n = Number(e.currentTarget.value);
-    if (Number.isFinite(n)) value = Math.min(max, Math.max(min, n));
+    if (e.currentTarget.value !== '' && Number.isFinite(n)) value = Math.min(max, Math.max(min, n));
+  }
+
+  function focused(e: FocusEvent & { currentTarget: HTMLInputElement }) {
+    const el = e.currentTarget;
+    // Select so typing replaces the number; keep the field above the keyboard.
+    requestAnimationFrame(() => el.select());
+    setTimeout(() => el.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
   }
 </script>
 
@@ -34,12 +45,21 @@
   <span class="label">{label}</span>
   <div class="row">
     <button class="nudge" onclick={() => nudge(-1)} aria-label="Decrease {label}">−</button>
-    <div class="value">
-      <input type="number" inputmode="decimal" value={value} onchange={typed} aria-label={label} />
-      {#if format}<span class="fmt">{format(value)}</span>{/if}
-    </div>
+    <label class="value">
+      <input
+        type="number"
+        inputmode="decimal"
+        {value}
+        onchange={typed}
+        onfocus={focused}
+        aria-label={label}
+        size="4"
+      />
+      {#if unit}<span class="unit">{unit}</span>{/if}
+    </label>
     <button class="nudge" onclick={() => nudge(1)} aria-label="Increase {label}">+</button>
   </div>
+  {#if hint}<span class="hint">{hint}</span>{/if}
 </div>
 
 <style>
@@ -47,7 +67,7 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    flex: 1;
+    width: 100%;
     min-width: 0;
   }
   .label {
@@ -56,63 +76,72 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
-    text-align: center;
   }
   .row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) 56px;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
   .nudge {
-    width: 44px;
-    height: 52px;
-    flex-shrink: 0;
-    border-radius: 14px;
+    height: 56px;
+    border-radius: 16px;
     border: 1px solid var(--line);
     background: var(--raised);
     color: var(--accent-soft);
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 600;
   }
   .nudge:active {
     transform: translateY(2px);
   }
   .value {
-    flex: 1;
-    min-width: 0;
-    position: relative;
+    height: 56px;
+    border-radius: 16px;
+    background: #120e0b;
+    border: 1px solid var(--line-soft);
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 10px;
+    min-width: 0;
+  }
+  .value:focus-within {
+    border-color: var(--accent);
   }
   input {
     width: 100%;
-    height: 52px;
+    min-width: 0;
+    max-width: 5.5ch;
     border: none;
     background: transparent;
     color: var(--text);
     text-align: center;
     font-family: var(--display);
-    font-size: 36px;
+    font-size: 34px;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
+    padding: 0;
     -moz-appearance: textfield;
     appearance: textfield;
+  }
+  input:focus {
+    outline: none;
   }
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
-  input:focus {
-    outline: 2px solid var(--accent);
-    border-radius: 10px;
-  }
-  .fmt {
-    position: absolute;
-    bottom: -14px;
-    font-size: 11px;
+  .unit {
+    font-size: 15px;
+    font-weight: 600;
     color: var(--muted);
-    white-space: nowrap;
+  }
+  .hint {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
   }
 </style>

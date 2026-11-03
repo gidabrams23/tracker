@@ -6,6 +6,8 @@
   import Settings from './screens/Settings.svelte';
   import Home from './screens/Home.svelte';
   import Workouts from './screens/workouts/Workouts.svelte';
+  import Albums from './screens/albums/Albums.svelte';
+  import Running from './screens/running/Running.svelte';
   import { loadSettings } from './lib/settings.svelte';
   import { ensureTemplates } from './lib/workouts/store';
   import { dayKey } from './lib/day';
@@ -22,8 +24,20 @@
       screen = next;
       window.scrollTo(0, 0);
     };
-    if (document.startViewTransition) document.startViewTransition(swap);
-    else swap();
+    if (document.startViewTransition) {
+      // The transition waits for a rendered frame. If none comes (app just woke up, page not
+      // painting), swap anyway after a moment so a tap never feels dead.
+      let done = false;
+      const once = () => {
+        if (done) return;
+        done = true;
+        swap();
+      };
+      const t = document.startViewTransition(once);
+      t.ready.catch(() => {});
+      t.finished.catch(() => {});
+      setTimeout(once, 250);
+    } else swap();
   }
 
   onMount(() => {
@@ -51,6 +65,10 @@
     <FloorMode {today} {go} />
   {:else if screen === 'workouts'}
     <Workouts {today} {go} />
+  {:else if screen === 'albums'}
+    <Albums {today} {go} />
+  {:else if screen === 'running'}
+    <Running {today} {go} />
   {:else}
     <Settings {go} />
   {/if}

@@ -72,6 +72,16 @@ export function saveSound(): void {
   blip(990, 0.07, 0.12);
 }
 
+/** Climbs a major scale with each set of the day, so later sets sound like progress. */
+export function setChime(setNumber: number): void {
+  const scale = [0, 2, 4, 5, 7, 9, 11];
+  const i = Math.max(0, setNumber - 1);
+  const semis = scale[i % 7] + 12 * Math.floor(i / 7);
+  const base = 523.25 * Math.pow(2, Math.min(semis, 24) / 12);
+  blip(base, 0, 0.09, 0.08);
+  blip(base * 1.5, 0.06, 0.16, 0.06);
+}
+
 export function goalSound(): void {
   [523, 659, 784, 1047].forEach((f, i) => blip(f, i * 0.09, 0.22, 0.09));
 }
