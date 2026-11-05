@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import Sheet from '../../components/Sheet.svelte';
-  import { searchAlbums, type AlbumResult } from '../../lib/albums/itunes';
+  import { artAt, searchAlbums, type AlbumResult } from '../../lib/albums/search';
 
   let { onpick, onmanual, onclose }: { onpick: (a: AlbumResult) => void; onmanual: () => void; onclose: () => void } = $props();
 
@@ -59,9 +59,9 @@
   {/if}
 
   <div class="results">
-    {#each results as r (r.itunesId)}
+    {#each results as r (r.source + r.sourceId)}
       <button class="result" onclick={() => onpick(r)}>
-        {#if r.artworkUrl}<img src={r.artworkUrl.replace('600x600bb', '120x120bb')} alt="" loading="lazy" />{/if}
+        {#if r.artworkUrl}<img src={artAt(r.artworkUrl, 120)} alt="" loading="lazy" />{/if}
         <span class="text">
           <span class="title">{r.title}</span>
           <span class="muted">{r.artist}{r.year ? ` · ${r.year}` : ''}</span>

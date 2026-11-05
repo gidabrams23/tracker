@@ -59,6 +59,10 @@ export interface AlbumEntry {
   year?: number;
   genre?: string;
   artworkUrl?: string;
+  /** Where the metadata came from, for re-fetching details later. */
+  source?: 'deezer' | 'itunes';
+  sourceId?: string;
+  /** Older entries (before Deezer) stored only this. */
   itunesId?: number;
   /** 0–100 */
   score: number;

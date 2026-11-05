@@ -1,4 +1,4 @@
-export type Group = 'biceps' | 'back' | 'abs';
+export type Group = 'biceps' | 'back' | 'triceps' | 'chest' | 'shoulders' | 'abs';
 export type Equipment = 'dumbbell' | 'barbell' | 'cable' | 'machine' | 'plate' | 'bodyweight';
 
 export interface Exercise {
@@ -52,7 +52,35 @@ export const EXERCISES: Exercise[] = [
   ex({ id: 'tbar-row', name: 'T-bar row', group: 'back', equipment: 'machine', unit: 'reps', increment: 5, defaultWeight: 70, defaultReps: 10 }),
   ex({ id: 'chin-up', name: 'Chin-up', group: 'back', equipment: 'bodyweight', unit: 'reps', increment: 5, defaultWeight: 0, defaultReps: 8, why: 'Hits biceps and lats together' }),
   ex({ id: 'straight-arm-pulldown', name: 'Straight-arm pulldown', group: 'back', equipment: 'cable', unit: 'reps', increment: 5, defaultWeight: 40, defaultReps: 12 }),
-  ex({ id: 'face-pull', name: 'Face pull', group: 'back', equipment: 'cable', unit: 'reps', increment: 5, defaultWeight: 40, defaultReps: 15, why: 'Rear delts and posture; a light finisher' }),
+  ex({ id: 'face-pull', name: 'Face pull', group: 'shoulders', equipment: 'cable', unit: 'reps', increment: 5, defaultWeight: 100, defaultReps: 15 }),
+
+  // Triceps
+  ex({ id: 'tricep-dips', name: 'Tricep dips', group: 'triceps', equipment: 'bodyweight', unit: 'reps', increment: 5, defaultWeight: 0, defaultReps: 20, note: 'Or push-ups · 20–25 reps' }),
+  ex({ id: 'db-tricep-extension', name: 'Dumbbell tricep extension', group: 'triceps', equipment: 'dumbbell', unit: 'reps', increment: 5, defaultWeight: 55, defaultReps: 10 }),
+  ex({ id: 'tricep-pulldown', name: 'Tricep pulldown', group: 'triceps', equipment: 'cable', unit: 'reps', increment: 5, defaultWeight: 50, defaultReps: 12, note: 'Your notes: 50 lb (100 on the stack)' }),
+  ex({ id: 'db-overhead-extension', name: 'Dumbbell overhead extension', group: 'triceps', equipment: 'dumbbell', unit: 'reps', increment: 5, defaultWeight: 45, defaultReps: 10, note: '"Dumbbell overhead dips" in your notes' }),
+  ex({ id: 'bench-dips', name: 'Bench tricep dips', group: 'triceps', equipment: 'bodyweight', unit: 'reps', increment: 5, defaultWeight: 0, defaultReps: 15 }),
+  ex({ id: 'rope-pushdown', name: 'Rope pushdown', group: 'triceps', equipment: 'cable', unit: 'reps', increment: 5, defaultWeight: 40, defaultReps: 12, why: 'Rope lets you split at the bottom for a harder squeeze' }),
+  ex({ id: 'skull-crusher', name: 'Skull crusher', group: 'triceps', equipment: 'barbell', unit: 'reps', increment: 5, defaultWeight: 50, defaultReps: 10, why: 'EZ bar on a flat bench when the cables are busy' }),
+
+  // Chest
+  ex({ id: 'low-high-fly', name: 'Low-to-high cable fly', group: 'chest', equipment: 'cable', unit: 'reps', increment: 5, defaultWeight: 20, defaultReps: 12 }),
+  ex({ id: 'incline-bench', name: 'Incline bench', group: 'chest', equipment: 'barbell', unit: 'reps', increment: 5, defaultWeight: 105, defaultReps: 10 }),
+  ex({ id: 'fly-machine', name: 'Fly machine', group: 'chest', equipment: 'machine', unit: 'reps', increment: 5, defaultWeight: 90, defaultReps: 12 }),
+  ex({ id: 'incline-seated-fly', name: 'Incline seated dumbbell fly', group: 'chest', equipment: 'dumbbell', unit: 'reps', increment: 5, defaultWeight: 15, defaultReps: 12 }),
+  ex({ id: 'db-press', name: 'Dumbbell press', group: 'chest', equipment: 'dumbbell', unit: 'reps', increment: 5, defaultWeight: 50, defaultReps: 10 }),
+  ex({ id: 'cable-crossover', name: 'Cable crossover', group: 'chest', equipment: 'cable', unit: 'reps', increment: 5, defaultWeight: 25, defaultReps: 12, why: 'High-to-low pairs with your low-to-high fly' }),
+  ex({ id: 'chest-dip', name: 'Chest dip', group: 'chest', equipment: 'bodyweight', unit: 'reps', increment: 5, defaultWeight: 0, defaultReps: 12, why: 'Lean forward on the dip bars to shift work to the chest' }),
+
+  // Shoulders
+  ex({ id: 'front-raise', name: 'Front raise', group: 'shoulders', equipment: 'plate', unit: 'reps', increment: 5, defaultWeight: 25, defaultReps: 12, note: '25 dumbbell or 35 plate' }),
+  ex({ id: 'db-shoulder-press', name: 'Dumbbell shoulder press', group: 'shoulders', equipment: 'dumbbell', unit: 'reps', increment: 5, defaultWeight: 35, defaultReps: 10 }),
+  ex({ id: 'shrugs', name: 'Shrugs', group: 'shoulders', equipment: 'dumbbell', unit: 'reps', increment: 5, defaultWeight: 40, defaultReps: 12 }),
+  ex({ id: 'lateral-raise', name: 'Dumbbell lateral raise', group: 'shoulders', equipment: 'dumbbell', unit: 'reps', increment: 5, defaultWeight: 25, defaultReps: 12, note: 'Or face pulls (100)' }),
+  ex({ id: 'lifts', name: 'Lifts', group: 'shoulders', equipment: 'dumbbell', unit: 'reps', increment: 5, defaultWeight: 25, defaultReps: 12, note: 'As written in your notes' }),
+  ex({ id: 'iyt', name: 'I-Y-T raises', group: 'shoulders', equipment: 'dumbbell', unit: 'reps', increment: 2.5, defaultWeight: 10, defaultReps: 10, note: 'Straight arms' }),
+  ex({ id: 'arnold-press', name: 'Arnold press', group: 'shoulders', equipment: 'dumbbell', unit: 'reps', increment: 5, defaultWeight: 30, defaultReps: 10, why: 'Rotating press hits front and side delts together' }),
+  ex({ id: 'cable-lateral-raise', name: 'Cable lateral raise', group: 'shoulders', equipment: 'cable', unit: 'reps', increment: 5, defaultWeight: 15, defaultReps: 12, why: 'Constant tension at the bottom, where dumbbells go slack' }),
 
   // Abs
   ex({ id: 'hanging-leg-raise', name: 'Hanging leg raise', group: 'abs', equipment: 'bodyweight', unit: 'reps', increment: 5, defaultWeight: 0, defaultReps: 12 }),
@@ -80,7 +108,14 @@ export function exercise(id: string): Exercise {
   );
 }
 
-export const GROUP_LABEL: Record<Group, string> = { biceps: 'Biceps', back: 'Back', abs: 'Abs' };
+export const GROUP_LABEL: Record<Group, string> = {
+  biceps: 'Biceps',
+  back: 'Back',
+  triceps: 'Triceps',
+  chest: 'Chest',
+  shoulders: 'Shoulders',
+  abs: 'Abs',
+};
 
 /** "25 lb", "BW", "BW+25" */
 export function weightLabel(ex: Exercise, weight: number): string {

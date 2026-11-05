@@ -9,16 +9,55 @@ export function newBlock(kind: BlockKind, exerciseIds: string[], sets = 4, optio
   return { id: crypto.randomUUID(), kind, exerciseIds, sets, ...(optional ? { optional } : {}) };
 }
 
-/** Gid's usual biceps & back day, in order. */
-function defaultBicepsBack(): Block[] {
-  return [
-    newBlock('superset', ['db-curl', 'bent-row']),
-    newBlock('superset', ['zottman-curl', 'pull-up']),
-    newBlock('superset', ['hammer-curl', 'seated-row']),
-    newBlock('single', ['hanging-leg-raise'], 3, true),
-    ladderBlock('db-curl'),
-  ];
-}
+const pair = (a: string, b: string) => newBlock('superset', [a, b]);
+
+/**
+ * Gid's workout days, built from his notes. Exercises are paired in the order the notes list
+ * them, alternating sets within each pair. Everything can be swapped or reordered in the app.
+ */
+export const WORKOUT_DAYS: { id: string; name: string; blocks: () => Block[] }[] = [
+  {
+    id: BICEPS_BACK,
+    name: 'Biceps & Back',
+    blocks: () => [
+      pair('db-curl', 'bent-row'),
+      pair('zottman-curl', 'pull-up'),
+      pair('hammer-curl', 'seated-row'),
+      newBlock('single', ['hanging-leg-raise'], 3, true),
+      ladderBlock('db-curl'),
+    ],
+  },
+  {
+    id: 'chest-tris',
+    name: 'Chest & Tris',
+    blocks: () => [
+      pair('low-high-fly', 'db-overhead-extension'),
+      pair('incline-bench', 'fly-machine'),
+      pair('incline-seated-fly', 'bench-dips'),
+      newBlock('single', ['db-press']),
+    ],
+  },
+  {
+    id: 'arms',
+    name: 'Arms',
+    blocks: () => [
+      pair('seated-barbell-curl', 'tricep-dips'),
+      pair('zottman-curl', 'db-tricep-extension'),
+      pair('hammer-curl', 'tricep-pulldown'),
+      ladderBlock('db-curl'),
+    ],
+  },
+  {
+    id: 'shoulders',
+    name: 'Shoulders',
+    blocks: () => [
+      pair('front-raise', 'db-shoulder-press'),
+      pair('shrugs', 'lateral-raise'),
+      pair('lifts', 'iyt'),
+      newBlock('single', ['cross-body-curl']),
+    ],
+  },
+];
 
 /** Bicep ladder from Gid's notes: start at 30, work up to 70, then back down. */
 export function ladderBlock(exerciseId: string): Block {
@@ -26,9 +65,12 @@ export function ladderBlock(exerciseId: string): Block {
   return { ...newBlock('ladder', [exerciseId], ladderWeights(ladder).length), ladder };
 }
 
+/** Adds any workout day that isn't saved yet. Never touches days you've already customized. */
 export async function ensureTemplates(): Promise<void> {
-  if (!(await db.workoutTemplates.get(BICEPS_BACK))) {
-    await db.workoutTemplates.put({ id: BICEPS_BACK, name: 'Biceps & Back', blocks: defaultBicepsBack(), updatedAt: Date.now() });
+  for (const d of WORKOUT_DAYS) {
+    if (!(await db.workoutTemplates.get(d.id))) {
+      await db.workoutTemplates.put({ id: d.id, name: d.name, blocks: d.blocks(), updatedAt: Date.now() });
+    }
   }
 }
 
@@ -69,7 +111,8 @@ export async function saveTemplateBlocks(templateId: string, blocks: Block[]): P
 }
 
 export async function resetTemplate(templateId: string): Promise<void> {
-  if (templateId === BICEPS_BACK) await saveTemplateBlocks(templateId, defaultBicepsBack());
+  const day = WORKOUT_DAYS.find((d) => d.id === templateId);
+  if (day) await saveTemplateBlocks(templateId, day.blocks());
 }
 
 export async function logWorkoutSet(

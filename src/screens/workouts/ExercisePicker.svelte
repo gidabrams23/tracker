@@ -34,9 +34,16 @@
   .tabs {
     display: flex;
     gap: 8px;
+    overflow-x: auto;
+    flex-shrink: 0;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
   }
   .tabs button {
-    flex: 1;
+    flex: 0 0 auto;
+    padding: 0 16px;
     height: 40px;
     border-radius: 12px;
     border: 1px solid var(--line);

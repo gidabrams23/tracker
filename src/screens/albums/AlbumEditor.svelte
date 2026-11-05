@@ -5,7 +5,7 @@
   import { tier } from '../../lib/albums/score';
   import { haptic, clickSound } from '../../lib/feedback';
   import type { AlbumEntry } from '../../lib/db';
-  import type { AlbumResult } from '../../lib/albums/itunes';
+  import { artAt, type AlbumResult } from '../../lib/albums/search';
 
   let {
     entry,
@@ -57,7 +57,9 @@
       year: entry?.year ?? found?.year,
       genre: entry?.genre ?? found?.genre,
       artworkUrl,
-      itunesId: entry?.itunesId ?? found?.itunesId,
+      itunesId: entry?.itunesId,
+      source: entry?.source ?? found?.source,
+      sourceId: entry?.sourceId ?? found?.sourceId,
       score,
       notes: notes.trim(),
     });
@@ -75,7 +77,7 @@
 <Sheet title={isNew ? 'Rate it' : 'Edit album'} {onclose}>
   <div class="album">
     {#if artworkUrl}
-      <img src={artworkUrl} alt="" class="cover" />
+      <img src={artAt(artworkUrl, 300)} alt="" class="cover" />
     {:else}
       <div class="cover blank" aria-hidden="true">♪</div>
     {/if}

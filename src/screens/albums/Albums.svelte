@@ -9,7 +9,7 @@
   import { shortDate, weekday, weekStart, WEEKDAY_NAMES } from '../../lib/day';
   import { celebrate, goalSound, setChime } from '../../lib/feedback';
   import type { AlbumEntry } from '../../lib/db';
-  import type { AlbumResult } from '../../lib/albums/itunes';
+  import { artAt, type AlbumResult } from '../../lib/albums/search';
   import type { Go } from '../../lib/nav';
 
   let { today, go }: { today: string; go: Go } = $props();
@@ -80,7 +80,7 @@
         {#if a}
           <button class="record" onclick={() => (flow = { step: 'edit', entry: a })} in:fly={{ y: -40, duration: 500, easing: backOut }} aria-label="{a.title}, {a.score}">
             <span class="vinyl">
-              {#if a.artworkUrl}<img src={a.artworkUrl.replace('600x600bb', '200x200bb')} alt="" />{/if}
+              {#if a.artworkUrl}<img src={artAt(a.artworkUrl, 200)} alt="" />{/if}
             </span>
             <span class="rec-score">{a.score}</span>
           </button>
@@ -113,7 +113,7 @@
         {#each wall as a (a.id)}
           <button class="tile" onclick={() => (flow = { step: 'edit', entry: a })} aria-label="{a.title} by {a.artist}, {a.score}">
             {#if a.artworkUrl}
-              <img src={a.artworkUrl.replace('600x600bb', '300x300bb')} alt="" loading="lazy" />
+              <img src={artAt(a.artworkUrl, 300)} alt="" loading="lazy" />
             {:else}
               <span class="tile-blank">{a.title}</span>
             {/if}
@@ -126,7 +126,7 @@
         {#each ranked as a, i (a.id)}
           <button class="rank-row" onclick={() => (flow = { step: 'edit', entry: a })}>
             <span class="rank">{i + 1}</span>
-            {#if a.artworkUrl}<img src={a.artworkUrl.replace('600x600bb', '120x120bb')} alt="" loading="lazy" />{:else}<span class="thumb-blank"></span>{/if}
+            {#if a.artworkUrl}<img src={artAt(a.artworkUrl, 120)} alt="" loading="lazy" />{:else}<span class="thumb-blank"></span>{/if}
             <span class="rank-text">
               <span class="rank-title">{a.title}</span>
               <span class="muted">{a.artist} · {shortDate(a.day)}</span>

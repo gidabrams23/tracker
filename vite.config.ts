@@ -45,8 +45,8 @@ export default defineConfig({
             },
           },
           {
-            // Album covers from Apple, so the record wall works offline.
-            urlPattern: /^https:\/\/is\d+-ssl\.mzstatic\.com\/.*/i,
+            // Album covers (Deezer and Apple), so the record wall works offline.
+            urlPattern: /^https:\/\/(cdn-images\.dzcdn\.net|e-cdns-images\.dzcdn\.net|is\d+-ssl\.mzstatic\.com)\/.*/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'album-art',

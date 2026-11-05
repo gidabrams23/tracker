@@ -10,6 +10,7 @@
   import { albums } from '../lib/albums/store';
   import { runs } from '../lib/running/store';
   import { thisWeekCount } from '../lib/albums/score';
+  import { artAt } from '../lib/albums/search';
   import { formatMiles, totals as runTotals } from '../lib/running/stats';
   import { haptic } from '../lib/feedback';
   import type { Go, Screen } from '../lib/nav';
@@ -33,7 +34,7 @@
       .reverse()
       .filter((a) => a.artworkUrl)
       .slice(0, 3)
-      .map((a) => a.artworkUrl!.replace('600x600bb', '200x200bb')),
+      .map((a) => artAt(a.artworkUrl, 200)!),
   );
 
   const allRuns = $derived($runs ?? []);
@@ -58,10 +59,11 @@
   });
 
   const workoutLine = $derived.by(() => {
-    if (active) return 'In progress';
-    if (!lastWorkout) return 'Biceps & Back';
+    if (active) return `${active.name} · in progress`;
+    if (!lastWorkout) return 'Pick a workout';
     const days = Math.round((parseDay(today).getTime() - parseDay(lastWorkout.day).getTime()) / 86_400_000);
-    return days === 0 ? 'Done today' : days === 1 ? 'Last: yesterday' : `Last: ${days} days ago`;
+    const when = days === 0 ? 'today' : days === 1 ? 'yesterday' : `${days}d ago`;
+    return `${lastWorkout.name} · ${when}`;
   });
 
   // Respect iOS "Reduce Motion" for the tile entrance.
